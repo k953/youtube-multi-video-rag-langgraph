@@ -1,0 +1,10 @@
+langchain
+langgraph
+faiss-cpu
+openai
+youtube-transcript-api
+tiktoken
+pydantic
+fastapi
+uvicorn
+sentence-transformers
