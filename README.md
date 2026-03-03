@@ -130,6 +130,8 @@ Add multiple YouTube URLs inside the script → transcripts will be chunked and 
 * Docker deployment
 * Auth + multi-user memory
 
+## 🔌 MCP + LangGraph Agent Workflow
+
                          ┌──────────────────────────┐
                          │        USER QUERY         │
                          └─────────────┬────────────┘
