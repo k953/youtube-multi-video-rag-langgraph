@@ -129,3 +129,65 @@ Add multiple YouTube URLs inside the script → transcripts will be chunked and 
 * Whisper for audio ingestion
 * Docker deployment
 * Auth + multi-user memory
+
+                         ┌──────────────────────────┐
+                         │        USER QUERY         │
+                         └─────────────┬────────────┘
+                                       │
+                                       ▼
+                ┌──────────────────────────────────────┐
+                │          LANGGRAPH AGENT             │
+                │  (State Manager + Workflow Engine)   │
+                └─────────────┬────────────────────────┘
+                              │
+                              ▼
+                ┌──────────────────────────────────────┐
+                │               PLANNER                │
+                │  - Analyze query                     │
+                │  - Decide: Tool required?            │
+                │  - Route next step                   │
+                └─────────────┬────────────────────────┘
+                              │ YES (tool needed)
+                              ▼
+                ┌──────────────────────────────────────┐
+                │            MCP TOOL CALL             │
+                │    (Model Context Protocol Layer)    │
+                │  Exposes /search API endpoint        │
+                └─────────────┬────────────────────────┘
+                              │
+                              ▼
+                ┌──────────────────────────────────────┐
+                │           FAISS RETRIEVER            │
+                │  - Query embedding                   │
+                │  - Similarity search (Top-K)         │
+                │  - Metadata filter (video_id)        │
+                └─────────────┬────────────────────────┘
+                              │
+                    Retrieved Transcript Chunks
+                 (text + timestamp + video_id)
+                              │
+                              ▼
+                ┌──────────────────────────────────────┐
+                │         AGENT STATE UPDATE           │
+                │   state["context"] = chunks         │
+                └─────────────┬────────────────────────┘
+                              │
+                              ▼
+                ┌──────────────────────────────────────┐
+                │          LLM (OpenAI GPT)            │
+                │  - Grounded generation               │
+                │  - Context-only answering            │
+                │  - Add citations + timestamps        │
+                └─────────────┬────────────────────────┘
+                              │
+                              ▼
+                ┌──────────────────────────────────────┐
+                │        FINAL ANSWER + SOURCES        │
+                └─────────────┬────────────────────────┘
+                              │
+                              ▼
+                ┌──────────────────────────────────────┐
+                │         STREAMLIT UI + MEMORY        │
+                │  - Token streaming                   │
+                │  - Chat history stored               │
+                └──────────────────────────────────────┘
